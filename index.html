@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My YouTube Videos</title>
+    <title>Your YouTube Videos</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+        }
+        #video-container {
+            margin-top: 20px;
         }
         .video {
             margin-bottom: 20px;
@@ -24,23 +27,34 @@
     </style>
 </head>
 <body>
-    <h1>My YouTube Videos</h1>
+    <h1>Your YouTube Videos</h1>
+    <input type="text" id="search-query" placeholder="Search for videos..." />
+    <button id="search-button">Search</button>
+
     <div id="video-container"></div>
 
     <script>
         const apiKey = 'AIzaSyBGjods0pcFaU_P7Gsw5mcAE7CXcz_zoVY'; // Your YouTube API key
         const channelId = 'UCY9xXNj9nOM-Ent-MdARCEQ'; // Your YouTube Channel ID
+        let allVideos = []; // Array to store all videos
 
         async function fetchVideos() {
-            const response = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=20`);
-            const data = await response.json();
-            displayVideos(data.items);
+            const playlistResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey}`);
+            const playlistData = await playlistResponse.json();
+            const uploadsPlaylistId = playlistData.items[0].contentDetails.relatedPlaylists.uploads;
+
+            const videosResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=20&playlistId=${uploadsPlaylistId}&key=${apiKey}`);
+            const videosData = await videosResponse.json();
+            allVideos = videosData.items; // Store all videos for searching
+            displayVideos(allVideos); // Display all videos initially
         }
 
         function displayVideos(videos) {
             const videoContainer = document.getElementById('video-container');
+            videoContainer.innerHTML = ''; // Clear previous results
+
             videos.forEach(video => {
-                const videoId = video.id.videoId; // Get the video ID
+                const videoId = video.snippet.resourceId.videoId; // Get the video ID
                 const title = video.snippet.title; // Get the video title
                 const description = video.snippet.description; // Get the video description
                 const thumbnail = video.snippet.thumbnails.high.url; // Get the thumbnail URL
@@ -57,7 +71,17 @@
             });
         }
 
-        fetchVideos();
+        document.getElementById('search-button').onclick = function() {
+            const query = document.getElementById('search-query').value.toLowerCase();
+            const filteredVideos = allVideos.filter(video => {
+                const title = video.snippet.title.toLowerCase();
+                const description = video.snippet.description.toLowerCase();
+                return title.includes(query) || description.includes(query);
+            });
+            displayVideos(filteredVideos); // Display filtered videos
+        };
+
+        fetchVideos(); // Fetch and display videos when the page loads
     </script>
 </body>
 </html>

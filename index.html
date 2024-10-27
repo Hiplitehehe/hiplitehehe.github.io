@@ -36,24 +36,6 @@
             font-size: 14px;
             display: none; /* Hide description by default */
         }
-        .video button {
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-            display: inline-block; /* Show button */
-        }
-        .video button:hover {
-            background-color: #0056b3;
-        }
-        iframe {
-            width: 100%;
-            height: 315px; /* Fixed height for video */
-            display: none; /* Hide iframe by default */
-        }
     </style>
 </head>
 <body>
@@ -66,23 +48,14 @@
         let allVideos = []; // Array to store all videos
 
         async function fetchVideos() {
-            try {
-                const playlistResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey}`);
-                if (!playlistResponse.ok) throw new Error('Failed to fetch playlist');
+            const playlistResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey}`);
+            const playlistData = await playlistResponse.json();
+            const uploadsPlaylistId = playlistData.items[0].contentDetails.relatedPlaylists.uploads;
 
-                const playlistData = await playlistResponse.json();
-                const uploadsPlaylistId = playlistData.items[0].contentDetails.relatedPlaylists.uploads;
-
-                const videosResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=20&playlistId=${uploadsPlaylistId}&key=${apiKey}`);
-                if (!videosResponse.ok) throw new Error('Failed to fetch videos');
-
-                const videosData = await videosResponse.json();
-                allVideos = videosData.items; // Store all videos for searching
-                displayVideos(allVideos); // Display all videos initially
-            } catch (error) {
-                console.error('Error fetching videos:', error);
-                document.getElementById('video-container').innerHTML = `<p>Error loading videos. Please try again later.</p>`;
-            }
+            const videosResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=20&playlistId=${uploadsPlaylistId}&key=${apiKey}`);
+            const videosData = await videosResponse.json();
+            allVideos = videosData.items; // Store all videos for searching
+            displayVideos(allVideos); // Display all videos initially
         }
 
         function displayVideos(videos) {
@@ -92,39 +65,18 @@
             videos.forEach(video => {
                 const videoId = video.snippet.resourceId.videoId; // Get the video ID
                 const title = video.snippet.title; // Get the video title
-                const description = video.snippet.description; // Get the video description
                 const thumbnailUrl = video.snippet.thumbnails.high.url; // Get the video thumbnail URL
 
                 const videoElement = document.createElement('div');
                 videoElement.classList.add('video');
 
-                // Create clickable title and button
+                // Create clickable title and link to video page
                 videoElement.innerHTML = `
                     <img src="${thumbnailUrl}" alt="${title} Thumbnail">
-                    <h3 onclick="showVideo('${videoId}', '${title}', '${description}')">${title}</h3>
-                    <button onclick="showVideo('${videoId}', '${title}', '${description}')">Click to Show Video</button>
+                    <h3 onclick="window.location.href='video.html?id=${videoId}&title=${encodeURIComponent(title)}'">${title}</h3>
                 `;
                 videoContainer.appendChild(videoElement);
             });
-        }
-
-        function showVideo(videoId, title, description) {
-            // Clear the video container and show the selected video
-            const videoContainer = document.getElementById('video-container');
-            videoContainer.innerHTML = `
-                <div class="video">
-                    <img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="${title} Thumbnail">
-                    <h3>${title}</h3>
-                    <p>${description}</p>
-                    <button onclick="goBack()">Back to Videos</button>
-                    <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
-                </div>
-            `;
-        }
-
-        function goBack() {
-            // Clear the video container and display all videos again
-            displayVideos(allVideos);
         }
 
         fetchVideos(); // Fetch and display videos when the page loads

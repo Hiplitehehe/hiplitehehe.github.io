@@ -85,16 +85,16 @@
 
                 // Create clickable title and button
                 videoElement.innerHTML = `
-                    <h3 onclick="showVideo('${videoId}', '${title}', '${description}', this)"> ${title} </h3>
+                    <h3 onclick="showVideo('${videoId}', '${title}', '${description}')">${title}</h3>
                     <p>${description}</p>
-                    <button onclick="showVideo('${videoId}', '${title}', '${description}', this)">Click to Show Video</button>
-                    <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+                    <button onclick="showVideo('${videoId}', '${title}', '${description}')">Click to Show Video</button>
+                    <iframe id="iframe-${videoId}" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
                 `;
                 videoContainer.appendChild(videoElement);
             });
         }
 
-        function showVideo(videoId, title, description, element) {
+        function showVideo(videoId, title, description) {
             // Hide all videos
             const allVideoDivs = document.querySelectorAll('.video');
             allVideoDivs.forEach(div => {

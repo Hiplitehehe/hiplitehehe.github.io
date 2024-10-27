@@ -25,6 +25,11 @@
             font-size: 18px;
             cursor: pointer;
         }
+        .video img {
+            width: 100%; /* Make thumbnail responsive */
+            height: auto;
+            border-radius: 4px;
+        }
         .video p {
             margin: 0;
             color: #555;
@@ -79,12 +84,14 @@
                 const videoId = video.snippet.resourceId.videoId; // Get the video ID
                 const title = video.snippet.title; // Get the video title
                 const description = video.snippet.description; // Get the video description
+                const thumbnailUrl = video.snippet.thumbnails.high.url; // Get the video thumbnail URL
 
                 const videoElement = document.createElement('div');
                 videoElement.classList.add('video');
 
                 // Create clickable title and button
                 videoElement.innerHTML = `
+                    <img src="${thumbnailUrl}" alt="${title} Thumbnail">
                     <h3 onclick="showVideo('${videoId}', '${title}', '${description}')">${title}</h3>
                     <p>${description}</p>
                     <button onclick="showVideo('${videoId}', '${title}', '${description}')">Click to Show Video</button>

@@ -8,28 +8,67 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #f4f4f4;
         }
         #video-container {
             margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* Spacing between cards */
         }
         .video {
-            margin-bottom: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 300px; /* Fixed width for cards */
         }
         .video img {
             max-width: 100%;
             height: auto;
         }
+        .video h3 {
+            margin: 10px;
+            font-size: 18px;
+        }
+        .video p {
+            margin: 0 10px 10px;
+            color: #555;
+            font-size: 14px;
+        }
         iframe {
             width: 100%;
-            max-width: 560px;
-            height: 315px;
+            height: 170px; /* Fixed height for video */
+        }
+        #search-container {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: calc(100% - 120px); /* Width minus button width */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
     <h1>Your YouTube Videos</h1>
-    <input type="text" id="search-query" placeholder="Search for videos..." />
-    <button id="search-button">Search</button>
+    <div id="search-container">
+        <input type="text" id="search-query" placeholder="Search for videos..." />
+        <button id="search-button">Search</button>
+    </div>
 
     <div id="video-container"></div>
 
@@ -62,10 +101,12 @@
                 const videoElement = document.createElement('div');
                 videoElement.classList.add('video');
                 videoElement.innerHTML = `
-                    <h3>${title}</h3>
                     <img src="${thumbnail}" alt="${title} Thumbnail">
-                    <p>${description}</p>
-                    <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <h3>${title}</h3>
+                        <p>${description}</p>
+                        <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+                    </div>
                 `;
                 videoContainer.appendChild(videoElement);
             });

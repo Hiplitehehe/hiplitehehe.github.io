@@ -44,14 +44,14 @@
             border-radius: 4px;
             cursor: pointer;
             margin-top: 10px;
-            display: none; /* Hide button by default */
+            display: inline-block; /* Show button */
         }
         .video button:hover {
             background-color: #0056b3;
         }
         iframe {
             width: 100%;
-            height: 170px; /* Fixed height for video */
+            height: 315px; /* Fixed height for video */
             display: none; /* Hide iframe by default */
         }
     </style>
@@ -93,36 +93,31 @@
                 videoElement.innerHTML = `
                     <img src="${thumbnailUrl}" alt="${title} Thumbnail">
                     <h3 onclick="showVideo('${videoId}', '${title}', '${description}')">${title}</h3>
-                    <p>${description}</p>
                     <button onclick="showVideo('${videoId}', '${title}', '${description}')">Click to Show Video</button>
-                    <iframe id="iframe-${videoId}" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
                 `;
                 videoContainer.appendChild(videoElement);
             });
         }
 
         function showVideo(videoId, title, description) {
-            // Hide all videos
-            const allVideoDivs = document.querySelectorAll('.video');
-            allVideoDivs.forEach(div => {
-                div.style.display = 'none'; // Hide all video elements
-            });
-
-            // Create a new video container for the selected video
-            const selectedVideoElement = document.createElement('div');
-            selectedVideoElement.classList.add('video');
-            selectedVideoElement.innerHTML = `
-                <h3>${title}</h3>
-                <p>${description}</p>
-                <button onclick="goBack()">Back to Videos</button>
-                <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+            // Clear the video container and show the selected video
+            const videoContainer = document.getElementById('video-container');
+            videoContainer.innerHTML = `
+                <div class="video">
+                    <img src="${videoId.thumbnail}" alt="${title} Thumbnail">
+                    <h3>${title}</h3>
+                    <p>${description}</p>
+                    <button onclick="goBack()">Back to Videos</button>
+                    <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+                </div>
             `;
-            document.getElementById('video-container').appendChild(selectedVideoElement); // Add the selected video to the container
+            const videoElement = videoContainer.querySelector('img'); // Add thumbnail to videoElement
+            videoElement.style.display = 'block'; // Show thumbnail
+            videoElement.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`; // Set thumbnail URL
         }
 
         function goBack() {
             // Clear the video container and display all videos again
-            document.getElementById('video-container').innerHTML = '';
             displayVideos(allVideos);
         }
 

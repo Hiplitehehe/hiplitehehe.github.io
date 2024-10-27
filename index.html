@@ -104,16 +104,13 @@
             const videoContainer = document.getElementById('video-container');
             videoContainer.innerHTML = `
                 <div class="video">
-                    <img src="${videoId.thumbnail}" alt="${title} Thumbnail">
+                    <img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="${title} Thumbnail">
                     <h3>${title}</h3>
                     <p>${description}</p>
                     <button onclick="goBack()">Back to Videos</button>
                     <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
                 </div>
             `;
-            const videoElement = videoContainer.querySelector('img'); // Add thumbnail to videoElement
-            videoElement.style.display = 'block'; // Show thumbnail
-            videoElement.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`; // Set thumbnail URL
         }
 
         function goBack() {

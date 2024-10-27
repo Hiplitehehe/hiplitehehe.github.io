@@ -3,36 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My YouTube Channel</title>
+    <title>My YouTube Videos</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-        h1 { color: #FF0000; }
-        .video-container { margin-top: 20px; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .video {
+            margin-bottom: 20px;
+        }
+        .video img {
+            max-width: 100%;
+            height: auto;
+        }
+        iframe {
+            width: 100%;
+            max-width: 560px;
+            height: 315px;
+        }
     </style>
 </head>
 <body>
-    <h1>My Last YouTube Video</h1>
-    <div id="video-container" class="video-container"></div>
+    <h1>My YouTube Videos</h1>
+    <div id="video-container"></div>
 
     <script>
-        // Replace 'YOUR_API_KEY' with your actual YouTube API key
-        const apiKey = 'AIzaSyBGjods0pcFaU_P7Gsw5mcAE7CXcz_zoVY';
-        // Replace 'YOUR_CHANNEL_ID' with your actual YouTube channel ID
-        const channelId = 'UCY9xXNj9nOM-Ent-MdARCEQ';
+        const apiKey = 'AIzaSyBGjods0pcFaU_P7Gsw5mcAE7CXcz_zoVY'; // Your YouTube API key
+        const channelId = 'UCY9xXNj9nOM-Ent-MdARCEQ'; // Your YouTube Channel ID
 
-        async function fetchLatestVideo() {
-            const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&order=date&part=snippet&type=video&maxResults=1`;
-            const response = await fetch(url);
+        async function fetchVideos() {
+            const response = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=20`);
             const data = await response.json();
-            const videoId = data.items[0].id.videoId;
-
-            document.getElementById('video-container').innerHTML = `
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" 
-                frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            `;
+            displayVideos(data.items);
         }
 
-        fetchLatestVideo();
+        function displayVideos(videos) {
+            const videoContainer = document.getElementById('video-container');
+            videos.forEach(video => {
+                const videoId = video.id.videoId; // Get the video ID
+                const title = video.snippet.title; // Get the video title
+                const description = video.snippet.description; // Get the video description
+                const thumbnail = video.snippet.thumbnails.high.url; // Get the thumbnail URL
+
+                const videoElement = document.createElement('div');
+                videoElement.classList.add('video');
+                videoElement.innerHTML = `
+                    <h3>${title}</h3>
+                    <img src="${thumbnail}" alt="${title} Thumbnail">
+                    <p>${description}</p>
+                    <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+                `;
+                videoContainer.appendChild(videoElement);
+            });
+        }
+
+        fetchVideos();
     </script>
 </body>
 </html>

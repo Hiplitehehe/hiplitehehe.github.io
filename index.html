@@ -39,6 +39,7 @@
             border-radius: 4px;
             cursor: pointer;
             margin-top: 10px;
+            display: none; /* Hide button by default */
         }
         .video button:hover {
             background-color: #0056b3;
@@ -84,15 +85,16 @@
 
                 // Create clickable title and button
                 videoElement.innerHTML = `
-                    <h3 onclick="showVideo('${videoId}', '${title}', '${description}')">${title}</h3>
+                    <h3 onclick="showVideo('${videoId}', '${title}', '${description}', this)"> ${title} </h3>
                     <p>${description}</p>
+                    <button onclick="showVideo('${videoId}', '${title}', '${description}', this)">Click to Show Video</button>
                     <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
                 `;
                 videoContainer.appendChild(videoElement);
             });
         }
 
-        function showVideo(videoId, title, description) {
+        function showVideo(videoId, title, description, element) {
             // Hide all videos
             const allVideoDivs = document.querySelectorAll('.video');
             allVideoDivs.forEach(div => {
@@ -105,9 +107,16 @@
             selectedVideoElement.innerHTML = `
                 <h3>${title}</h3>
                 <p>${description}</p>
+                <button onclick="goBack()">Back to Videos</button>
                 <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
             `;
             document.getElementById('video-container').appendChild(selectedVideoElement); // Add the selected video to the container
+        }
+
+        function goBack() {
+            // Clear the video container and display all videos again
+            document.getElementById('video-container').innerHTML = '';
+            displayVideos(allVideos);
         }
 
         fetchVideos(); // Fetch and display videos when the page loads

@@ -84,8 +84,7 @@
 
                 // Create clickable title and button
                 videoElement.innerHTML = `
-                    <h3 onclick="toggleDescription(this)">${title}</h3>
-                    <button onclick="showVideo('${videoId}', this)">Click</button>
+                    <h3 onclick="showVideo('${videoId}', '${title}', '${description}')">${title}</h3>
                     <p>${description}</p>
                     <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
                 `;
@@ -93,15 +92,22 @@
             });
         }
 
-        function toggleDescription(titleElement) {
-            const description = titleElement.nextElementSibling.nextElementSibling; // Get the description <p>
-            description.style.display = description.style.display === 'block' ? 'none' : 'block'; // Toggle description visibility
-        }
+        function showVideo(videoId, title, description) {
+            // Hide all videos
+            const allVideoDivs = document.querySelectorAll('.video');
+            allVideoDivs.forEach(div => {
+                div.style.display = 'none'; // Hide all video elements
+            });
 
-        function showVideo(videoId, buttonElement) {
-            const iframe = buttonElement.parentElement.querySelector('iframe'); // Get the iframe associated with the clicked button
-            iframe.style.display = 'block'; // Show the video iframe
-            buttonElement.style.display = 'none'; // Hide the button after showing the video
+            // Create a new video container for the selected video
+            const selectedVideoElement = document.createElement('div');
+            selectedVideoElement.classList.add('video');
+            selectedVideoElement.innerHTML = `
+                <h3>${title}</h3>
+                <p>${description}</p>
+                <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+            `;
+            document.getElementById('video-container').appendChild(selectedVideoElement); // Add the selected video to the container
         }
 
         fetchVideos(); // Fetch and display videos when the page loads

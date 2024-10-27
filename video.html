@@ -9,6 +9,8 @@
             font-family: Arial, sans-serif;
             margin: 20px;
             background-color: #f4f4f4;
+            opacity: 0; /* Start hidden */
+            transition: opacity 0.5s ease; /* Fade-in effect */
         }
         .video-details {
             background-color: white;
@@ -57,7 +59,6 @@
     const title = urlParams.get('title');
 
     const apiKey = 'AIzaSyBGjods0pcFaU_P7Gsw5mcAE7CXcz_zoVY'; // Your YouTube API key
-    const channelId = 'UCY9xXNj9nOM-Ent-MdARCEQ'; // Your YouTube Channel ID
 
     document.getElementById('video-title').innerText = title;
     document.getElementById('video-frame').src = `https://www.youtube.com/embed/${videoId}`;
@@ -67,6 +68,9 @@
         const data = await response.json();
         const description = data.items[0].snippet.description; // Get video description
         document.getElementById('video-description').innerText = description; // Display description
+        
+        // Fade in body after content loads
+        document.body.style.opacity = '1';
     }
 
     fetchVideoDetails(); // Fetch video details when the page loads
